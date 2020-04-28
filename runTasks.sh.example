@@ -2,4 +2,5 @@
 #
 
 # Example
-# deleteOldFiles <bucket> <days>
+# ./deleteOldFiles.sh <bucket> <days>
+# ./deleteSpecificFile.sh <bucket> <filename>

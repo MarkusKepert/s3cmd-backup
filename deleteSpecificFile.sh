@@ -3,22 +3,17 @@
 
 function deleteFiles()
 {
-  timespan=$2
+  name=$2
+  bucket=$1
   # delete files in current dir
-  s3cmd ls $1 | grep "DIR" -v | while read -r files;
+  s3cmd ls $bucket | grep "DIR" -v | while read -r files;
   do
-    createDate=`echo $files|awk {'print $1" "$2'}`
-    createDate=`date -d"$createDate" +%s`
-    olderThan=`date -d"-$timespan days" +%s`
-    if [[ $createDate -lt $olderThan ]]
-    then
        fileName=`echo $files|awk {'print $4'}`
-       if [[ $fileName != "" ]]
+       if [[ $fileName = $bucket$name ]]
        then
           printf 'Deleting "%s"\n' $fileName
           s3cmd del "$fileName"
        fi
-    fi
   done;
 }
 
@@ -27,9 +22,9 @@ function deleteFiles()
 
 function traverseDir()
 {
-  echo "delete files older than " $2" days in folder " $1
-  timespan=$2
-  deleteFiles $1 $timespan
+  echo "delete file with name " $2" from folder " $1
+  name=$2
+  deleteFiles $1 $name
 
 
   # traverse through subdirs
@@ -37,7 +32,7 @@ function traverseDir()
   do
 	  # echo $subdirs
 	  sub=`echo $subdirs|awk {'print $2'}`
-	  traverseDir $sub $timespan
+	  traverseDir $sub $name
   done;
 }
 
